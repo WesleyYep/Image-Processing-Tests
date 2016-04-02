@@ -1,5 +1,5 @@
-# image_processing_tests
-Image processing tests for autonomous drone landing  
+# Image Processing Tests
+Image processing tests for autonomous drone landing (Part 4 project)  
   
 How to get OpenCV working (Windows)  
 - Download OpenCV from https://sourceforge.net/projects/opencvlibrary/files/ 

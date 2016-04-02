@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d7919249-b601-4a8f-be53-ef752f9636c4" name="Default" comment="" />
+    <list default="true" id="d7919249-b601-4a8f-be53-ef752f9636c4" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/TestWebcam.java" afterPath="$PROJECT_DIR$/src/TestWebcam.java" />
+    </list>
     <ignored path="OpenCVTest.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/bin/" />
@@ -25,14 +28,14 @@
       <file leaf-file-name="TestWebcam.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/TestWebcam.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5996503">
-              <caret line="65" column="48" selection-start-line="65" selection-start-column="48" selection-end-line="65" selection-end-column="48" />
+            <state vertical-scroll-proportion="0.27272728">
+              <caret line="18" column="8" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#8438#8446#0" expanded="true" />
-                <element signature="e#9812#9820#0" expanded="true" />
-                <element signature="e#10350#10357#0" expanded="true" />
-                <element signature="e#10408#10415#0" expanded="true" />
+                <element signature="e#8424#8432#0" expanded="true" />
+                <element signature="e#9798#9806#0" expanded="true" />
+                <element signature="e#10336#10343#0" expanded="true" />
+                <element signature="e#10394#10401#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -49,6 +52,9 @@
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GradleLocalSettings">
     <option name="modificationStamps">
@@ -71,7 +77,7 @@
     <option name="width" value="1923" />
     <option name="height" value="1047" />
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
     <OptionsSetting value="true" id="Remove" />
     <OptionsSetting value="true" id="Checkout" />
@@ -502,10 +508,10 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#8438#8446#0" expanded="true" />
-            <element signature="e#9812#9820#0" expanded="true" />
-            <element signature="e#10350#10357#0" expanded="true" />
-            <element signature="e#10408#10415#0" expanded="true" />
+            <element signature="e#8424#8432#0" expanded="true" />
+            <element signature="e#9798#9806#0" expanded="true" />
+            <element signature="e#10336#10343#0" expanded="true" />
+            <element signature="e#10394#10401#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -516,10 +522,10 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#8438#8446#0" expanded="true" />
-            <element signature="e#9812#9820#0" expanded="true" />
-            <element signature="e#10350#10357#0" expanded="true" />
-            <element signature="e#10408#10415#0" expanded="true" />
+            <element signature="e#8424#8432#0" expanded="true" />
+            <element signature="e#9798#9806#0" expanded="true" />
+            <element signature="e#10336#10343#0" expanded="true" />
+            <element signature="e#10394#10401#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -530,10 +536,10 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#8438#8446#0" expanded="true" />
-            <element signature="e#9812#9820#0" expanded="true" />
-            <element signature="e#10350#10357#0" expanded="true" />
-            <element signature="e#10408#10415#0" expanded="true" />
+            <element signature="e#8424#8432#0" expanded="true" />
+            <element signature="e#9798#9806#0" expanded="true" />
+            <element signature="e#10336#10343#0" expanded="true" />
+            <element signature="e#10394#10401#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -569,14 +575,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/TestWebcam.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5996503">
-          <caret line="65" column="48" selection-start-line="65" selection-start-column="48" selection-end-line="65" selection-end-column="48" />
+        <state vertical-scroll-proportion="0.27272728">
+          <caret line="18" column="8" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#8438#8446#0" expanded="true" />
-            <element signature="e#9812#9820#0" expanded="true" />
-            <element signature="e#10350#10357#0" expanded="true" />
-            <element signature="e#10408#10415#0" expanded="true" />
+            <element signature="e#8424#8432#0" expanded="true" />
+            <element signature="e#9798#9806#0" expanded="true" />
+            <element signature="e#10336#10343#0" expanded="true" />
+            <element signature="e#10394#10401#0" expanded="true" />
           </folding>
         </state>
       </provider>

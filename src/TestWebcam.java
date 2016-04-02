@@ -16,7 +16,7 @@ import java.util.List;
 public class TestWebcam {
 
 	static {
-                // Load the native OpenCV library
+		// Load the native OpenCV library
 		//System.out.println(System.getProperty("java.library.path"));
 		System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
 	}

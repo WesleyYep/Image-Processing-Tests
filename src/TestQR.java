@@ -35,7 +35,7 @@ public class TestQR {
 //------------------------------------------------------------------------------------------------------------------------
     public static void main ( String[] argv) {
 
-        VideoCapture capture = new VideoCapture("lol.mp4");
+        VideoCapture capture = new VideoCapture("test1.mp4");
         MyFrame frame = new MyFrame();
         frame.setVisible(true);
 
@@ -57,39 +57,34 @@ public class TestQR {
             return;
         }
 
-        // Creation of Intermediate 'Image' Objects required later
-        Mat gray = new Mat(image.height(),image.width(), CvType.CV_8UC1); // To hold Grayscale Image
-        Mat edges = new Mat(image.height(),image.width(), CvType.CV_8UC1); // To hold Grayscale Image
-        Mat traces = new Mat(image.size(),  CvType.CV_8UC3);								// For Debug Visuals
-        Mat qr,qr_raw,qr_gray,qr_thres;
 
-        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-        MatOfInt4 hierarchy = new MatOfInt4();
-
-        int mark=0,A=0,B=0,C=0,top=0,right=0,bottom=0,median1=0,median2=0,outlier=0;
-        double AB;
-        double BC;
-        double CA;
-        double dist;
-        double slope;
-        double areat;
-        double arear;
-        double areab;
-        double large;
-        double padding;
-
-        int align=0,orientation=0;
-
-        int DBG=1;						// Debug Flag
+     //   Mat qr,qr_raw,qr_gray,qr_thres;
 
         int key = 0;
         while(key != 'q')				// While loop to query for Image Input frame
         {
+            List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+            MatOfInt4 hierarchy = new MatOfInt4();
 
-            qr_raw = Mat.zeros(100, 100, CvType.CV_8UC3 );
-            qr = Mat.zeros(100, 100, CvType.CV_8UC3 );
-            qr_gray = Mat.zeros(100, 100, CvType.CV_8UC1 );
-            qr_thres = Mat.zeros(100, 100, CvType.CV_8UC1 );
+            int mark=0,A=0,B=0,C=0,top=0,right=0,bottom=0,median1=0,median2=0,outlier=0;
+            double AB;
+            double BC;
+            double CA;
+            double dist;
+            double slope;
+
+            int align=0,orientation=0;
+
+            int DBG=1;						// Debug Flag
+            // Creation of Intermediate 'Image' Objects required later
+            Mat gray = new Mat(image.height(),image.width(), CvType.CV_8UC1); // To hold Grayscale Image
+            Mat edges = new Mat(image.height(),image.width(), CvType.CV_8UC1); // To hold Grayscale Image
+            Mat traces = new Mat(image.size(),  CvType.CV_8UC3);			    // For Debug Visuals
+
+//            qr_raw = Mat.zeros(100, 100, CvType.CV_8UC3 );
+//            qr = Mat.zeros(100, 100, CvType.CV_8UC3 );
+//            qr_gray = Mat.zeros(100, 100, CvType.CV_8UC1 );
+//            qr_thres = Mat.zeros(100, 100, CvType.CV_8UC1 );
 
             capture.read(image);						// Capture Image from Image Input
             Imgproc.cvtColor(image,gray, Imgproc.COLOR_RGB2GRAY);		// Convert Image captured from Image Input to GrayScale
@@ -98,6 +93,7 @@ public class TestQR {
 
             Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE); // Find contours with hierarchy
 
+           // System.out.println("contour size: " + contours.size());
             mark = 0;								// Reset all detected marker count for this frame
 
             // Get Moments for all Contours and the mass centers
@@ -108,7 +104,7 @@ public class TestQR {
             for( int i = 0; i < contours.size(); i++ )
             {
                 //mu.set(i, new Moments( contours.get(i), false );
-                mu.add(i, new Moments());
+                mu.add(i, Imgproc.moments(contours.get(i), false));
                 mc.add(i, new Point( mu.get(i).m10/mu.get(i).m00 , mu.get(i).m01/mu.get(i).m00 ));
             }
 
@@ -118,20 +114,18 @@ public class TestQR {
             // NOTE: 1. Contour enclosing other contours is assumed to be the three Alignment markings of the QR code.
             // 2. Alternately, the Ratio of areas of the "concentric" squares can also be used for identifying base Alignment markers.
             // The below demonstrates the first method
-
+        //    System.out.println("dump: " + hierarchy.dump()+ " rows: " + hierarchy.rows());
             for( int i = 0; i < contours.size(); i++ )
             {
                 int k=i;
                 int c=0;
 
-                //while(hierarchy.get(k,2)[0] != -1)
-                while(hierarchy.get(k,2) != null)
+                while(hierarchy.get(0,k) != null && hierarchy.get(0,k)[2] != -1)
                 {
-                    k = (int) hierarchy.get(k,2)[0];
+                    k = (int) hierarchy.get(0,k)[2];
                     c = c+1;
                 }
-            //   if(hierarchy.get(k,2)[0] != -1)
-               if(hierarchy.get(k,2) != null)
+               if(hierarchy.get(0,k) != null && hierarchy.get(0,k)[2] != -1)
                     c = c+1;
 
                 if (c >= 5)
@@ -142,9 +136,10 @@ public class TestQR {
                     mark = mark + 1 ;
                 }
             }
+     //       System.out.println("markers: " + mark);
 
-
-            if (mark >= 2)		// Ensure we have (atleast 3; namely A,B,C) 'Alignment Markers' discovered
+            // if (mark >= 2)		// Ensure we have (atleast 3; namely A,B,C) 'Alignment Markers' discovered
+            if (mark == 3)		// Ensure we have (atleast 3; namely A,B,C) 'Alignment Markers' discovered
             {
                 // We have found the 3 markers for the QR code; Now we need to determine which of them are 'top', 'right' and 'bottom' markers
 
@@ -233,37 +228,41 @@ public class TestQR {
 
                     boolean iflag = getIntersectionPoint(M.get(1),M.get(2),O.get(3),O.get(2),N);
 
+//                    src.add(L.get(0));
+//                    src.add(M.get(1));
+//                    src.add(new Point(M.get(1).x, O.get(3).y));
+//                    src.add(O.get(3));
+//
+//                    dst.add(new Point(0,0));
+//                    dst.add(new Point(qr.cols(),0));
+//                    dst.add(new Point(qr.cols(), qr.rows()));
+//                    dst.add(new Point(0, qr.rows()));
 
-                    src.add(L.get(0));
-                    src.add(M.get(1));
-                    src.add(N.value);
-                    src.add(O.get(3));
-
-                    dst.add(new Point(0,0));
-                    dst.add(new Point(qr.cols(),0));
-                    dst.add(new Point(qr.cols(), qr.rows()));
-                    dst.add(new Point(0, qr.rows()));
-
-                    MatOfPoint2f srcMat = new MatOfPoint2f(src.toArray(new Point[src.size()]));
-                    MatOfPoint2f dstMat = new MatOfPoint2f(dst.toArray(new Point[dst.size()]));
-
-                    if (src.size() == 4 && dst.size() == 4 )			// Failsafe for WarpMatrix Calculation to have only 4 Points with src and dst
-                    {
-                        warp_matrix = Imgproc.getPerspectiveTransform(srcMat, dstMat);
-                        Imgproc.warpPerspective(image, qr_raw, warp_matrix, new Size(qr.cols(), qr.rows()));
-                        Core.copyMakeBorder( qr_raw, qr, 10, 10, 10, 10, Core.BORDER_CONSTANT, new Scalar(255,255,255) );
-
-                        Imgproc.cvtColor(qr,qr_gray, Imgproc.COLOR_RGB2GRAY);
-                        Imgproc.threshold(qr_gray, qr_thres, 127, 255, Imgproc.THRESH_BINARY);
-
-                        //threshold(qr_gray, qr_thres, 0, 255, CV_THRESH_OTSU);
-                        //for( int d=0 ; d < 4 ; d++){	src.pop_back(); dst.pop_back(); }
+               //     System.out.println("src size: " + src.size() + " -  dest size: " + dst.size());
+                    if (!iflag) {
+                        continue;
                     }
+//                    MatOfPoint2f srcMat = new MatOfPoint2f(src.toArray(new Point[src.size()]));
+//                    MatOfPoint2f dstMat = new MatOfPoint2f(dst.toArray(new Point[dst.size()]));
+//
+//                    if (src.size() == 4 && dst.size() == 4)            // Failsafe for WarpMatrix Calculation to have only 4 Points with src and dst
+//                    {
+//                        warp_matrix = Imgproc.getPerspectiveTransform(srcMat, dstMat);
+//                        System.out.println("warp: " + warp_matrix.dump());
+//                        Imgproc.warpPerspective(image, qr_raw, warp_matrix, new Size(qr.cols(), qr.rows()));
+//                        Core.copyMakeBorder(qr_raw, qr, 10, 10, 10, 10, Core.BORDER_CONSTANT, new Scalar(255, 255, 255));
+//
+//                        Imgproc.cvtColor(qr, qr_gray, Imgproc.COLOR_RGB2GRAY);
+//                        Imgproc.threshold(qr_gray, qr_thres, 127, 255, Imgproc.THRESH_BINARY);
+//
+//                        //threshold(qr_gray, qr_thres, 0, 255, CV_THRESH_OTSU);
+//                        //for( int d=0 ; d < 4 ; d++){	src.pop_back(); dst.pop_back(); }
+//                    }
 
                     //Draw contours on the image
-                    Imgproc.drawContours( image, contours, top , new Scalar(255,200,0), 2, 8, hierarchy, 0, new Point());
-                    Imgproc.drawContours( image, contours, right , new Scalar(0,0,255), 2, 8, hierarchy, 0, new Point());
-                    Imgproc.drawContours( image, contours, bottom , new Scalar(255,0,100), 2, 8, hierarchy, 0, new Point() );
+                    Imgproc.drawContours(image, contours, top, new Scalar(255, 200, 0), 2, 8, hierarchy, 0, new Point());
+                    Imgproc.drawContours(image, contours, right, new Scalar(0, 0, 255), 2, 8, hierarchy, 0, new Point());
+                    Imgproc.drawContours(image, contours, bottom, new Scalar(255, 0, 100), 2, 8, hierarchy, 0, new Point());
 
                     // Insert Debug instructions here
                     if(DBG==1)
@@ -303,26 +302,29 @@ public class TestQR {
                         Imgproc.line(traces,M.get(1),N.value,new Scalar(0,0,255),1,8,0);
                         Imgproc.line(traces,O.get(3),N.value,new Scalar(0,0,255),1,8,0);
 
-
                         // Show the Orientation of the QR Code wrt to 2D Image Space
                      //   int fontFace = FONT_HERSHEY_PLAIN;
                         int fontFace = 1;
 
                         if(orientation == CV_QR_NORTH)
                         {
-                            Imgproc.putText(traces, "NORTH", new Point(20,30), fontFace, 1, new Scalar(0, 255, 0), 1, 8, true);
+                            Imgproc.putText(traces, "NORTH", new Point(20,30), fontFace, 1, new Scalar(0, 255, 0), 1, 8, false);
+                            //System.out.println("North");
                         }
                         else if (orientation == CV_QR_EAST)
                         {
-                            Imgproc.putText(traces, "EAST", new Point(20,30), fontFace, 1, new Scalar(0, 255, 0), 1, 8, true);
+                            Imgproc.putText(traces, "EAST", new Point(20,30), fontFace, 1, new Scalar(0, 255, 0), 1, 8, false);
+                            //System.out.println("East");
                         }
                         else if (orientation == CV_QR_SOUTH)
                         {
-                            Imgproc.putText(traces, "SOUTH", new Point(20,30), fontFace, 1, new Scalar(0, 255, 0), 1, 8, true);
+                            //System.out.println("South");
+                            Imgproc.putText(traces, "SOUTH", new Point(20,30), fontFace, 1, new Scalar(0, 255, 0), 1, 8, false);
                         }
                         else if (orientation == CV_QR_WEST)
                         {
-                            Imgproc.putText(traces, "WEST", new Point(20,30), fontFace, 1, new Scalar(0, 255, 0), 1, 8, true); //try false?
+                            //System.out.println("West");
+                            Imgproc.putText(traces, "WEST", new Point(20,30), fontFace, 1, new Scalar(0, 255, 0), 1, 8, false); //try false?
                         }
 
                         // Debug Prints
@@ -338,6 +340,7 @@ public class TestQR {
                 break;
             }
 
+            //todo
 //            imshow ( "Traces", traces );
 //            imshow ( "QR code", qr_thres );
 
@@ -449,6 +452,10 @@ public class TestQR {
         Z.y = (D.y + A.y) / 2;
 
         DoubleByRef[] dmax = new DoubleByRef[4];
+        dmax[0] = new DoubleByRef();
+        dmax[1] = new DoubleByRef();
+        dmax[2] = new DoubleByRef();
+        dmax[3] = new DoubleByRef();
         dmax[0].value=0.0;
         dmax[1].value=0.0;
         dmax[2].value=0.0;

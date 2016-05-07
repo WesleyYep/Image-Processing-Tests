@@ -27,7 +27,7 @@ public class TestQR {
 
     static {
         // Load the native OpenCV library
-        //System.out.println(System.getProperty("java.library.path"));
+        System.out.println(System.getProperty("java.library.path"));
         System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
     }
 

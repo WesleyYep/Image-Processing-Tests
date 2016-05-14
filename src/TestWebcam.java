@@ -17,7 +17,7 @@ public class TestWebcam {
 
 	static {
 		// Load the native OpenCV library
-		//System.out.println(System.getProperty("java.library.path"));
+		System.out.println(System.getProperty("java.library.path"));
 		System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
 	}
 
@@ -47,12 +47,17 @@ public class TestWebcam {
 				//	Thread.sleep(10); //remove this if using actual webcam
 				// Read current camera frame into matrix
 				cap.read(image);
-
-				//templateMatching(image);
-				//featureDetect(image);
-				//blobDetect(image);
-				contourDetect(image);
-
+				
+				if (args.length == 0 || args[0].equals("t")) {
+					templateMatching(image);
+				} else if (args[0].equals("f")) {
+					featureDetect(image);
+				} else if (args[0].equals("b")) {
+					blobDetect(image);
+				} else if (args[0].equals("c")) {
+					contourDetect(image);
+				}
+				
 				// Render frame if the camera is still acquiring images
 				if (image.rows() > 0) {
 					frame.render(image);
@@ -62,7 +67,7 @@ public class TestWebcam {
 				}
 				count++;
 			}
-		}catch (Exception e) {}
+		}catch (Exception e) {e.printStackTrace();}
 		long endTime = System.currentTimeMillis();
 		System.out.println("frames: " + count);
 		System.out.println("time was: " + (endTime-startTime));
@@ -70,10 +75,18 @@ public class TestWebcam {
 	}
 
 	private static void contourDetect(Mat image) {
-		Imgproc.cvtColor(image, image, Imgproc.COLOR_RGB2GRAY);
+		// / Create the result matrix
+		int result_cols = image.cols();
+		int result_rows = image.rows();
+		Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
+		
+		Imgproc.cvtColor(image, result, Imgproc.COLOR_RGB2GRAY);
+		Imgproc.threshold(result, result, 200, 255, Imgproc.THRESH_BINARY);
+
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 		MatOfInt4 hierarchy = new MatOfInt4();
-		Imgproc.findContours(image, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE); // Find contours with hierarchy
+
+		Imgproc.findContours(result, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE); // Find contours with hierarchy
 	}
 
 	private static void blobDetect(Mat image) {

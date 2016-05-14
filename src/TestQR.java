@@ -15,15 +15,8 @@ public class TestQR {
     static int CV_QR_EAST = 1;
     static int CV_QR_SOUTH = 2;
     static int CV_QR_WEST = 3;
-
-//    float cv_distance(Point2f P, Point2f Q);					// Get Distance between two points
-//    float cv_lineEquation(Point2f L, Point2f M, Point2f J);		// Perpendicular Distance of a Point J from line formed by Points L and M; Solution to equation of the line Val = ax+by+c
-//    float cv_lineSlope(Point2f L, Point2f M, int& alignement);	// Slope of a line by two Points L and M on it; Slope of line, S = (x1 -x2) / (y1- y2)
-//    void cv_getVertices(vector<vector<Point> > contours, int c_id,float slope, vector<Point2f>& X);
-//    void cv_updateCorner(Point2f P, Point2f ref ,float& baseline,  Point2f& corner);
-//    void cv_updateCornerOr(int orientation, vector<Point2f> IN, vector<Point2f> &OUT);
-//    bool getIntersectionPoint(Point2f a1, Point2f a2, Point2f b1, Point2f b2, Point2f& intersection);
-//    float cross(Point2f v1,Point2f v2);
+    static int width;
+    static int height;
 
     static {
         // Load the native OpenCV library
@@ -34,8 +27,7 @@ public class TestQR {
     // Start of Main Loop
 //------------------------------------------------------------------------------------------------------------------------
     public static void main ( String[] argv) {
-
-        VideoCapture capture = new VideoCapture("test1.mp4");
+        VideoCapture capture = new VideoCapture("test3.mp4");
         MyFrame frame = new MyFrame();
         frame.setVisible(true);
 
@@ -56,6 +48,8 @@ public class TestQR {
             System.out.println("ERR: Unable to query image from capture device.");
             return;
         }
+        width = image.width();
+        height = image.height();
 
 
      //   Mat qr,qr_raw,qr_gray,qr_thres;
@@ -80,11 +74,6 @@ public class TestQR {
             Mat gray = new Mat(image.height(),image.width(), CvType.CV_8UC1); // To hold Grayscale Image
             Mat edges = new Mat(image.height(),image.width(), CvType.CV_8UC1); // To hold Grayscale Image
             Mat traces = new Mat(image.size(),  CvType.CV_8UC3);			    // For Debug Visuals
-
-//            qr_raw = Mat.zeros(100, 100, CvType.CV_8UC3 );
-//            qr = Mat.zeros(100, 100, CvType.CV_8UC3 );
-//            qr_gray = Mat.zeros(100, 100, CvType.CV_8UC1 );
-//            qr_thres = Mat.zeros(100, 100, CvType.CV_8UC1 );
 
             capture.read(image);						// Capture Image from Image Input
             Imgproc.cvtColor(image,gray, Imgproc.COLOR_RGB2GRAY);		// Convert Image captured from Image Input to GrayScale
@@ -136,7 +125,7 @@ public class TestQR {
                     mark = mark + 1 ;
                 }
             }
-     //       System.out.println("markers: " + mark);
+          //  System.out.println("markers: " + mark);
 
             // if (mark >= 2)		// Ensure we have (atleast 3; namely A,B,C) 'Alignment Markers' discovered
             if (mark == 3)		// Ensure we have (atleast 3; namely A,B,C) 'Alignment Markers' discovered
@@ -214,9 +203,6 @@ public class TestQR {
                     PointByRef N = new PointByRef();
 
                     List<Point> src = new ArrayList<Point>(),dst = new ArrayList<Point>();		// src - Source Points basically the 4 end co-ordinates of the overlay image
-                    // dst - Destination Points to transform overlay image
-
-                    Mat warp_matrix;
 
                     cv_getVertices(contours,top,slope,tempL);
                     cv_getVertices(contours,right,slope,tempM);
@@ -226,44 +212,21 @@ public class TestQR {
                     cv_updateCornerOr(orientation, tempM, M); 			// Re-arrange marker corners w.r.t orientation of the QR code
                     cv_updateCornerOr(orientation, tempO, O); 			// Re-arrange marker corners w.r.t orientation of the QR code
 
-                    boolean iflag = getIntersectionPoint(M.get(1),M.get(2),O.get(3),O.get(2),N);
-
-//                    src.add(L.get(0));
-//                    src.add(M.get(1));
-//                    src.add(new Point(M.get(1).x, O.get(3).y));
-//                    src.add(O.get(3));
-//
-//                    dst.add(new Point(0,0));
-//                    dst.add(new Point(qr.cols(),0));
-//                    dst.add(new Point(qr.cols(), qr.rows()));
-//                    dst.add(new Point(0, qr.rows()));
+                    boolean iflag = getIntersectionPoint(M.get(1),M.get(3),L.get(0),L.get(2),N);
+                    
 
                //     System.out.println("src size: " + src.size() + " -  dest size: " + dst.size());
                     if (!iflag) {
                         continue;
                     }
-//                    MatOfPoint2f srcMat = new MatOfPoint2f(src.toArray(new Point[src.size()]));
-//                    MatOfPoint2f dstMat = new MatOfPoint2f(dst.toArray(new Point[dst.size()]));
-//
-//                    if (src.size() == 4 && dst.size() == 4)            // Failsafe for WarpMatrix Calculation to have only 4 Points with src and dst
-//                    {
-//                        warp_matrix = Imgproc.getPerspectiveTransform(srcMat, dstMat);
-//                        System.out.println("warp: " + warp_matrix.dump());
-//                        Imgproc.warpPerspective(image, qr_raw, warp_matrix, new Size(qr.cols(), qr.rows()));
-//                        Core.copyMakeBorder(qr_raw, qr, 10, 10, 10, 10, Core.BORDER_CONSTANT, new Scalar(255, 255, 255));
-//
-//                        Imgproc.cvtColor(qr, qr_gray, Imgproc.COLOR_RGB2GRAY);
-//                        Imgproc.threshold(qr_gray, qr_thres, 127, 255, Imgproc.THRESH_BINARY);
-//
-//                        //threshold(qr_gray, qr_thres, 0, 255, CV_THRESH_OTSU);
-//                        //for( int d=0 ; d < 4 ; d++){	src.pop_back(); dst.pop_back(); }
-//                    }
+                    Imgproc.circle(image, N.value, 10, new Scalar(0,255,255), 1, 8, 0 );
 
                     //Draw contours on the image
-                    Imgproc.drawContours(image, contours, top, new Scalar(255, 200, 0), 2, 8, hierarchy, 0, new Point());
-                    Imgproc.drawContours(image, contours, right, new Scalar(0, 0, 255), 2, 8, hierarchy, 0, new Point());
-                    Imgproc.drawContours(image, contours, bottom, new Scalar(255, 0, 100), 2, 8, hierarchy, 0, new Point());
-
+                    if (DBG == 1) {
+                    	Imgproc.drawContours(image, contours, top, new Scalar(255, 200, 0), 2, 8, hierarchy, 0, new Point());
+                    	Imgproc.drawContours(image, contours, right, new Scalar(0, 0, 255), 2, 8, hierarchy, 0, new Point());
+                    	Imgproc.drawContours(image, contours, bottom, new Scalar(255, 0, 100), 2, 8, hierarchy, 0, new Point());
+                    }
                     // Insert Debug instructions here
                     if(DBG==1)
                     {
@@ -300,7 +263,7 @@ public class TestQR {
 
                         // Draw the lines used for estimating the 4th Corner of QR Code
                         Imgproc.line(traces,M.get(1),N.value,new Scalar(0,0,255),1,8,0);
-                        Imgproc.line(traces,O.get(3),N.value,new Scalar(0,0,255),1,8,0);
+                        Imgproc.line(traces,L.get(0),N.value,new Scalar(0,0,255),1,8,0);
 
                         // Show the Orientation of the QR Code wrt to 2D Image Space
                      //   int fontFace = FONT_HERSHEY_PLAIN;
@@ -582,18 +545,28 @@ public class TestQR {
     // Function: Get the Intersection Point of the lines formed by sets of two points
     static boolean getIntersectionPoint(Point a1, Point a2, Point b1, Point b2, PointByRef intersection)
     {
-        Point p = a1;
-        Point q = b1;
-        Point r = new Point(a2.x-a1.x, a2.y-a2.y);
-        Point s= new Point(b2.x-b1.x, b2.y - b1.y);
+    	double x12 = a1.x - a2.x;
+    	double x34 = b1.x - b2.x;
+    	double y12 = a1.y - a2.y;
+    	double y34 = b1.y - b2.y;
+    	double c = x12 * y34 - y12 * x34;
 
-        if(cross(r,s) == 0) {return false;}
+    	if (Math.abs(c) < 0.01)
+    	{
+    	  // No intersection
+    	  return false;
+    	}
+    	else
+    	{
+    	  // Intersection
+    		double a = a1.x * a2.y - a1.y * a2.x;
+    		double b = b1.x * b2.y - b1.y * b2.x;
 
-        double t = cross(new Point(q.x-p.x,q.y-p.y),s)/cross(r,s);
+    		intersection.value = new Point((a * x34 - b * x12) / c, (a * y34 - b * y12) / c);
 
-        Point temp = new Point(t*r.x, t*r.y);
-        intersection.value = new Point(p.x + temp.x, p.y+temp.y);
-        return true;
+    		return (intersection.value.x > 0 && intersection.value.x < width && intersection.value.y > 0 && intersection.value.y < height)  ;
+    	}
+
     }
 
     static double cross(Point v1,Point v2)

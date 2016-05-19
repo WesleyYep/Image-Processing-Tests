@@ -560,6 +560,9 @@ public class TestQR {
     // Function: Get the Intersection Point of the lines formed by sets of two points
     static boolean getIntersectionPoint(Point a1, Point a2, Point b1, Point b2, PointByRef intersection)
     {
+    	if (a1 == null || a2 == null || b1 == null || b2 == null || intersection == null) {
+    		return false;
+    	}
     	double x12 = a1.x - a2.x;
     	double x34 = b1.x - b2.x;
     	double y12 = a1.y - a2.y;

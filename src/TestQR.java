@@ -27,7 +27,7 @@ public class TestQR {
     // Start of Main Loop
 //------------------------------------------------------------------------------------------------------------------------
     public static void main ( String[] argv) {
-        VideoCapture capture = new VideoCapture("test3.mp4");
+        VideoCapture capture = new VideoCapture("test1.mp4");
         MyFrame frame = new MyFrame();
         frame.setVisible(true);
 
@@ -220,7 +220,22 @@ public class TestQR {
                         continue;
                     }
                     Imgproc.circle(image, N.value, 10, new Scalar(0,255,255), 1, 8, 0 );
-
+                    int centreX = width/2;
+                    int centreY = height/2;
+                    double relativeY = N.value.y - centreY;
+                    double relativeX = N.value.x - centreX;
+                    System.out.println("Centre - x: " + centreX + ", y: " + centreY + " ----- relative pos of QR - x: " + relativeX + ", y: " + relativeY);
+                    double aovHorizontal = Math.toRadians(54);
+                    double aovVertical = Math.toRadians(41);
+                    double pitch = Math.toRadians(0);
+                    double roll = Math.toRadians(0);
+                    double actualX, actualY;
+                    double h = 30; //in m
+                    actualX = h * Math.tan(roll) - (-relativeX/width)*h*(Math.tan(roll+aovHorizontal) - Math.tan(roll-aovHorizontal)); // in m
+                    actualY = h * Math.tan(pitch) - (-relativeY/height)*h*(Math.tan(pitch+aovVertical) - Math.tan(pitch-aovVertical)); // in m
+                    System.out.println("adjusted relative x is: " + actualX);	
+                    System.out.println("adjusted relative y is: " + actualY);	
+                    
                     //Draw contours on the image
                     if (DBG == 1) {
                     	Imgproc.drawContours(image, contours, top, new Scalar(255, 200, 0), 2, 8, hierarchy, 0, new Point());

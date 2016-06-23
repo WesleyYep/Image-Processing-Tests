@@ -83,8 +83,9 @@ public class TestQR {
             //could try true ^
 
             ColorBlobDetector detector = new ColorBlobDetector();
+   //         detector.setColorRadius(new Scalar(255, 130, 255)); 
+   //         detector.setHsvColor(new Scalar(60, 155, 15)); 
             detector.setHsvColor(new Scalar(60, 205, 205));
-            detector.setColorRadius(new Scalar(25, 100, 100));  
             traces2 = detector.process(image);
             contours = detector.getContours();
             hierarchy = detector.getHierachy();
@@ -230,7 +231,22 @@ public class TestQR {
                         continue;
                     }
                     Imgproc.circle(image, N.value, 10, new Scalar(0,255,255), 1, 8, 0 );
-
+                    int centreX = width/2;
+                    int centreY = height/2;
+                    double relativeY = N.value.y - centreY;
+                    double relativeX = N.value.x - centreX;
+                    System.out.println("Centre - x: " + centreX + ", y: " + centreY + " ----- relative pos of QR - x: " + relativeX + ", y: " + relativeY);
+                    double aovHorizontal = Math.toRadians(54);
+                    double aovVertical = Math.toRadians(41);
+                    double pitch = Math.toRadians(0);
+                    double roll = Math.toRadians(0);
+                    double actualX, actualY;
+                    double h = 30; //in m
+                    actualX = h * Math.tan(roll) - (-relativeX/width)*h*(Math.tan(roll+aovHorizontal) - Math.tan(roll-aovHorizontal)); // in m
+                    actualY = h * Math.tan(pitch) - (-relativeY/height)*h*(Math.tan(pitch+aovVertical) - Math.tan(pitch-aovVertical)); // in m
+                    System.out.println("adjusted relative x is: " + actualX);	
+                    System.out.println("adjusted relative y is: " + actualY);	
+                    
                     //Draw contours on the image
                     if (DBG == 1) {
                     	Imgproc.drawContours(image, contours, top, new Scalar(255, 200, 0), 2, 8, hierarchy, 0, new Point());
@@ -307,7 +323,7 @@ public class TestQR {
             }
 
             if (image.rows() > 0) {
-                frame.render(image);
+                frame.render(traces2);
             } else {
                 System.out.println("No captured frame -- camera disconnected");
                 break;
@@ -555,6 +571,9 @@ public class TestQR {
     // Function: Get the Intersection Point of the lines formed by sets of two points
     static boolean getIntersectionPoint(Point a1, Point a2, Point b1, Point b2, PointByRef intersection)
     {
+    	if (a1 == null || a2 == null || b1 == null || b2 == null || intersection == null) {
+    		return false;
+    	}
     	double x12 = a1.x - a2.x;
     	double x34 = b1.x - b2.x;
     	double y12 = a1.y - a2.y;

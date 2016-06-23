@@ -105,7 +105,7 @@ public class ColorBlobDetector {
                 mContours.add(contour);
             }
         }
-        return mDilatedMask;
+        return mMask;
     }
 
     public List<MatOfPoint> getContours() {

@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
-	<classpathentry kind="lib" path="H:/opencv/build/java/opencv-310.jar">
+	<classpathentry kind="lib" path="C:/Users/Wesley/Downloads/opencv/build/java/opencv-310.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Image-Processing-Tests/resources"/>
 		</attributes>

@@ -27,7 +27,7 @@ public class TestQR {
     // Start of Main Loop
 //------------------------------------------------------------------------------------------------------------------------
     public static void main ( String[] argv) {
-        VideoCapture capture = new VideoCapture("test3.mp4");
+        VideoCapture capture = new VideoCapture("test4.mp4");
         MyFrame frame = new MyFrame();
         frame.setVisible(true);
 
@@ -74,15 +74,23 @@ public class TestQR {
             Mat gray = new Mat(image.height(),image.width(), CvType.CV_8UC1); // To hold Grayscale Image
             Mat edges = new Mat(image.height(),image.width(), CvType.CV_8UC1); // To hold Grayscale Image
             Mat traces = new Mat(image.size(),  CvType.CV_8UC3);			    // For Debug Visuals
+            Mat traces2 = new Mat(image.size(),  CvType.CV_8UC3);			    // For Debug Visuals
 
             capture.read(image);						// Capture Image from Image Input
-            Imgproc.cvtColor(image,gray, Imgproc.COLOR_RGB2GRAY);		// Convert Image captured from Image Input to GrayScale
-            Imgproc.Canny(gray, edges, 100 , 200, 3, false);		// Apply Canny edge detection on the gray image
+        //    deinterlace(image);
+        //    Imgproc.cvtColor(image,gray, Imgproc.COLOR_RGB2GRAY);		// Convert Image captured from Image Input to GrayScale
+       //     Imgproc.Canny(gray, edges, 100 , 200, 3, false);		// Apply Canny edge detection on the gray image
             //could try true ^
 
-            Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE); // Find contours with hierarchy
+            ColorBlobDetector detector = new ColorBlobDetector();
+            detector.setHsvColor(new Scalar(60, 205, 205));
+            detector.setColorRadius(new Scalar(25, 100, 100));  
+            traces2 = detector.process(image);
+            contours = detector.getContours();
+            hierarchy = detector.getHierachy();
+       //     Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE); // Find contours with hierarchy
 
-           // System.out.println("contour size: " + contours.size());
+            System.out.println("contour size: " + contours.size());
             mark = 0;								// Reset all detected marker count for this frame
 
             // Get Moments for all Contours and the mass centers
@@ -213,7 +221,9 @@ public class TestQR {
                     cv_updateCornerOr(orientation, tempO, O); 			// Re-arrange marker corners w.r.t orientation of the QR code
 
                     boolean iflag = getIntersectionPoint(M.get(1),M.get(3),L.get(0),L.get(2),N);
-                    
+                    System.out.println("distance: " + cv_distance(M.get(1),L.get(0)));
+                    Imgproc.circle(image, M.get(1), 10, new Scalar(255,255,0), 1, 8, 0 );
+                    Imgproc.circle(image, L.get(0), 10, new Scalar(255,255,0), 1, 8, 0 );
 
                //     System.out.println("src size: " + src.size() + " -  dest size: " + dst.size());
                     if (!iflag) {
@@ -572,6 +582,16 @@ public class TestQR {
     static double cross(Point v1,Point v2)
     {
         return v1.x*v2.y - v1.y*v2.x;
+    }
+    
+    static void deinterlace(Mat original) {
+        for (int i = 0; i < original.rows()-2; i+=2) {
+            Mat row = original.row(i);
+            Mat nextRow = original.row(i+1);
+            Mat rowAfter = original.row(i+2);
+            Core.addWeighted(row, 0.5, rowAfter, 0.5, 0, nextRow);
+//            row.copyTo(nextRow);
+        }
     }
 
 // EOF

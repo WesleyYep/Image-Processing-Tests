@@ -10,6 +10,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 public class ColorBlobDetector {
@@ -81,39 +82,39 @@ public class ColorBlobDetector {
     }
 
     public Mat process(Mat rgbaImage) {
-        Imgproc.pyrDown(rgbaImage, mPyrDownMat);
-        Imgproc.pyrDown(mPyrDownMat, mPyrDownMat);
+//        Imgproc.pyrDown(rgbaImage, mPyrDownMat);
+//        Imgproc.pyrDown(mPyrDownMat, mPyrDownMat);
 
-        Imgproc.cvtColor(mPyrDownMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
+        Imgproc.cvtColor(rgbaImage, mHsvMat, Imgproc.COLOR_BGR2HSV_FULL);
 
         Core.inRange(mHsvMat, mLowerBound, mUpperBound, mMask);
         Imgproc.dilate(mMask, mDilatedMask, new Mat());
 
-        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-        Imgproc.Canny(mDilatedMask, mDilatedMask, 100 , 200, 3, false);	
-        Imgproc.findContours(mDilatedMask, contours, mHierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
-
-        // Find max contour area
-        double maxArea = 0;
-        Iterator<MatOfPoint> each = contours.iterator();
-        while (each.hasNext()) {
-            MatOfPoint wrapper = each.next();
-            double area = Imgproc.contourArea(wrapper);
-            if (area > maxArea)
-                maxArea = area;
-        }
-
-        // Filter contours by area and resize to fit the original image size
-        mContours.clear();
-        each = contours.iterator();
-        while (each.hasNext()) {
-            MatOfPoint contour = each.next();
-            if (Imgproc.contourArea(contour) > mMinContourArea*maxArea) {
-                Core.multiply(contour, new Scalar(4,4), contour);
-                mContours.add(contour);
-            }
-        }
-        return mMask;
+//        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+//        Imgproc.Canny(mDilatedMask, mDilatedMask, 100 , 200, 3, false);	
+//        Imgproc.findContours(mDilatedMask, contours, mHierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+//
+//        // Find max contour area
+//        double maxArea = 0;
+//        Iterator<MatOfPoint> each = contours.iterator();
+//        while (each.hasNext()) {
+//            MatOfPoint wrapper = each.next();
+//            double area = Imgproc.contourArea(wrapper);
+//            if (area > maxArea)
+//                maxArea = area;
+//        }
+//
+//        // Filter contours by area and resize to fit the original image size
+//        mContours.clear();
+//        each = contours.iterator();
+//        while (each.hasNext()) {
+//            MatOfPoint contour = each.next();
+//            if (Imgproc.contourArea(contour) > mMinContourArea*maxArea) {
+//                Core.multiply(contour, new Scalar(4,4), contour);
+//                mContours.add(contour);
+//            }
+//        }
+        return mDilatedMask;
     }
 
     public List<MatOfPoint> getContours() {

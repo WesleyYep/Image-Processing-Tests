@@ -77,22 +77,20 @@ public class TestQR {
             Mat traces2 = new Mat(image.size(),  CvType.CV_8UC3);			    // For Debug Visuals
 
             capture.read(image);						// Capture Image from Image Input
-        //    deinterlace(image);
-        //    Imgproc.cvtColor(image,gray, Imgproc.COLOR_RGB2GRAY);		// Convert Image captured from Image Input to GrayScale
-       //     Imgproc.Canny(gray, edges, 100 , 200, 3, false);		// Apply Canny edge detection on the gray image
-            //could try true ^
 
             ColorBlobDetector detector = new ColorBlobDetector();
-   //         detector.setColorRadius(new Scalar(255, 130, 255)); 
-   //         detector.setHsvColor(new Scalar(60, 155, 15)); 
             detector.setup(image);
-            detector.setHsvColor(new Scalar(60, 205, 205));
-            traces2 = detector.process(image);
-            contours = detector.getContours();
-            hierarchy = detector.getHierachy();
-       //     Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE); // Find contours with hierarchy
-
-            System.out.println("contour size: " + contours.size());
+            detector.setColorRadius(new Scalar(25, 255, 255)); 
+            detector.setHsvColor(new Scalar(120, 205, 205));
+            gray = detector.process(image);
+//            contours = detector.getContours();
+//            hierarchy = detector.getHierachy();
+            
+//            Imgproc.cvtColor(traces2,gray, Imgproc.COLOR_BGR2GRAY);		// Convert Image captured from Image Input to GrayScale
+            Imgproc.Canny(gray, edges, 100 , 200, 3, false);		// Apply Canny edge detection on the gray image
+            Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE); // Find contours with hierarchy
+            
+            System.out.println("contour size: " + contours.size() + " - " + hierarchy.size());
             mark = 0;								// Reset all detected marker count for this frame
 
             // Get Moments for all Contours and the mass centers
@@ -135,7 +133,7 @@ public class TestQR {
                     mark = mark + 1 ;
                 }
             }
-          //  System.out.println("markers: " + mark);
+            //System.out.println("markers: " + mark);
 
             // if (mark >= 2)		// Ensure we have (atleast 3; namely A,B,C) 'Alignment Markers' discovered
             if (mark == 3)		// Ensure we have (atleast 3; namely A,B,C) 'Alignment Markers' discovered
@@ -324,7 +322,7 @@ public class TestQR {
             }
 
             if (image.rows() > 0) {
-                frame.render(traces2);
+                frame.render(gray);
             } else {
                 System.out.println("No captured frame -- camera disconnected");
                 break;

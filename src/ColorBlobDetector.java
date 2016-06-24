@@ -24,11 +24,11 @@ public class ColorBlobDetector {
     private List<MatOfPoint> mContours = new ArrayList<MatOfPoint>();
 
     // Cache
-    Mat mPyrDownMat = new Mat();
-    Mat mHsvMat = new Mat();
-    Mat mMask = new Mat();
-    Mat mDilatedMask = new Mat();
-    MatOfInt4 mHierarchy = new MatOfInt4();
+    Mat mPyrDownMat;
+    Mat mHsvMat;
+    Mat mMask;
+    Mat mDilatedMask;
+    MatOfInt4 mHierarchy;
 
     public void setColorRadius(Scalar radius) {
         mColorRadius = radius;
@@ -60,6 +60,14 @@ public class ColorBlobDetector {
         Imgproc.cvtColor(spectrumHsv, mSpectrum, Imgproc.COLOR_HSV2RGB_FULL, 4);
     }
 
+    public void setup(Mat image) {
+        mPyrDownMat = new Mat(image.size(),  CvType.CV_8UC3);
+        mHsvMat = new Mat(image.size(),  CvType.CV_8UC3);
+        mMask = new Mat(image.size(),  CvType.CV_8UC1);
+        mDilatedMask = new Mat(image.size(),  CvType.CV_8UC1);
+        mHierarchy = new MatOfInt4();
+    }
+    
     public Mat getSpectrum() {
         return mSpectrum;
     }

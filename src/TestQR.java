@@ -85,6 +85,7 @@ public class TestQR {
             ColorBlobDetector detector = new ColorBlobDetector();
    //         detector.setColorRadius(new Scalar(255, 130, 255)); 
    //         detector.setHsvColor(new Scalar(60, 155, 15)); 
+            detector.setup(image);
             detector.setHsvColor(new Scalar(60, 205, 205));
             traces2 = detector.process(image);
             contours = detector.getContours();

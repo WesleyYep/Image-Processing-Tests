@@ -1,3 +1,6 @@
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
@@ -13,6 +16,16 @@ public class TestColourDetection {
         System.out.println(System.getProperty("java.library.path"));
         System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
     }
+    
+    public static void setupSlider(RangeSlider slider, int majorSpacing, MyFrame frame) {
+    	slider.setMajorTickSpacing(majorSpacing);
+    	slider.setMinorTickSpacing(10);
+    	slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        slider.setValue(120);
+        slider.setUpperValue(255);
+        frame.add(slider);
+    }
 	
     public static void main ( String[] argv) {
 	    VideoCapture cap = new VideoCapture("ball.mp4"); //capture the video from webcam
@@ -20,7 +33,15 @@ public class TestColourDetection {
         frame.setVisible(true);
         MyFrame frame2 = new MyFrame();
         frame2.setVisible(true);
-        
+        RangeSlider hSlider = new RangeSlider(0,180);
+        RangeSlider sSlider = new RangeSlider(0,255);
+        RangeSlider vSlider = new RangeSlider(0,255);
+        setupSlider(hSlider, 60, frame);
+        setupSlider(sSlider, 50, frame);
+        setupSlider(vSlider, 50, frame);
+        hSlider.setValue(0);
+        hSlider.setUpperValue(5);
+
         if(!cap.isOpened()) {
             System.out.println("cannot open camera");
             return;
@@ -48,7 +69,8 @@ public class TestColourDetection {
 	        Mat imgHSV = new Mat( imgTmp.size(), CvType.CV_8UC3 );;
 	        Imgproc.cvtColor(imgOriginal, imgHSV, Imgproc.COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
 	        Mat imgThresholded = new Mat( imgTmp.size(), CvType.CV_8UC3 );;
-	        Core.inRange(imgHSV, new Scalar(170, 150, 60), new Scalar(180, 255, 255), imgThresholded); //Threshold the image
+	        Core.inRange(imgHSV, new Scalar(hSlider.getValue(), sSlider.getValue(), vSlider.getValue()), 
+	        		new Scalar(hSlider.getUpperValue(), sSlider.getUpperValue(), vSlider.getUpperValue()), imgThresholded); //Threshold the image
 	      
 	        //morphological opening (removes small objects from the foreground)
 	        Imgproc.erode(imgThresholded, imgThresholded, Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5, 5)) );

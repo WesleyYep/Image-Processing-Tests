@@ -27,7 +27,7 @@ public class TestQR {
     // Start of Main Loop
 //------------------------------------------------------------------------------------------------------------------------
     public static void main ( String[] argv) {
-        VideoCapture capture = new VideoCapture("test4.mp4");
+        VideoCapture capture = new VideoCapture(0);
         MyFrame frame = new MyFrame();
         frame.setVisible(true);
 
@@ -80,8 +80,8 @@ public class TestQR {
 
             ColorBlobDetector detector = new ColorBlobDetector();
             detector.setup(image);
-            detector.setColorRadius(new Scalar(25, 255, 255)); 
-            detector.setHsvColor(new Scalar(120, 205, 205));
+            detector.setColorRadius(new Scalar(20, 100, 100)); 
+            detector.setHsvColor(new Scalar(0, 205, 205));
             gray = detector.process(image);
 //            contours = detector.getContours();
 //            hierarchy = detector.getHierachy();
@@ -90,7 +90,7 @@ public class TestQR {
             Imgproc.Canny(gray, edges, 100 , 200, 3, false);		// Apply Canny edge detection on the gray image
             Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE); // Find contours with hierarchy
             
-            System.out.println("contour size: " + contours.size() + " - " + hierarchy.size());
+    //        System.out.println("contour size: " + contours.size() + " - " + hierarchy.size());
             mark = 0;								// Reset all detected marker count for this frame
 
             // Get Moments for all Contours and the mass centers

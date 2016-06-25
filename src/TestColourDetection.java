@@ -1,4 +1,5 @@
 import org.opencv.core.*;
+import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.opencv.videoio.VideoCapture;
@@ -15,7 +16,7 @@ public class TestColourDetection {
     }
 	
     public static void main ( String[] argv) {
-	    VideoCapture cap = new VideoCapture("ball.mp4"); //capture the video from webcam
+	    VideoCapture cap = new VideoCapture(0); //capture the video from webcam
 	    MyFrame frame = new MyFrame();
         frame.setVisible(true);
         MyFrame frame2 = new MyFrame();
@@ -48,7 +49,7 @@ public class TestColourDetection {
 	        Mat imgHSV = new Mat( imgTmp.size(), CvType.CV_8UC3 );;
 	        Imgproc.cvtColor(imgOriginal, imgHSV, Imgproc.COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
 	        Mat imgThresholded = new Mat( imgTmp.size(), CvType.CV_8UC3 );;
-	        Core.inRange(imgHSV, new Scalar(170, 150, 60), new Scalar(180, 255, 255), imgThresholded); //Threshold the image
+	        Core.inRange(imgHSV, new Scalar(0, 120, 120), new Scalar(5, 255, 255), imgThresholded); //Threshold the image
 	      
 	        //morphological opening (removes small objects from the foreground)
 	        Imgproc.erode(imgThresholded, imgThresholded, Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5, 5)) );
@@ -58,6 +59,12 @@ public class TestColourDetection {
 	        Imgproc.dilate( imgThresholded, imgThresholded, Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5, 5)) ); 
 	        Imgproc.erode(imgThresholded, imgThresholded, Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5, 5)) );
 	
+	        //see if we can find blobs based on contours
+	        MatOfKeyPoint keyPoints = new MatOfKeyPoint();
+	        FeatureDetector blobDetector = FeatureDetector.create(FeatureDetector.SIMPLEBLOB);
+	        blobDetector.detect(imgThresholded, keyPoints);
+	        System.out.println("blob count: " + keyPoints.size());
+	        
 	        //Calculate the moments of the thresholded image
 	        Moments oMoments = Imgproc.moments(imgThresholded);
 	

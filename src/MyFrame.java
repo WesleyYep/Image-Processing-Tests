@@ -1,3 +1,4 @@
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -24,6 +25,10 @@ public class MyFrame {
 		frame.getContentPane().add(panel);
 	}
 
+	public void add(Component component){
+		panel.add(component);
+	}
+	
 	public void setVisible(boolean visible) {
 		frame.setVisible(visible);
 	}

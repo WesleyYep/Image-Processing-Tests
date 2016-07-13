@@ -4,5 +4,7 @@
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/Wesley/Downloads/opencv/build/java/opencv-310.jar"/>
+	<classpathentry kind="lib" path="jna-3.5.2.jar"/>
+	<classpathentry kind="lib" path="vlcj-3.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
